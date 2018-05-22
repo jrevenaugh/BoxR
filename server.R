@@ -22,6 +22,8 @@ server <- function(input, output, session) {
                  "and goes again.",
                  "When all lines are drawn, the player with the most completed squares wins.",
                  tags$br(), tags$br(),
+                 "Select sides to draw by placing cursor near midpoint and clicking.",
+                 "Erase the last line drawn with the Undo button.",
                  "Justin Revenaugh", tags$br(),
                  "Earth Sciences", tags$br(),
                  "University of Minnesota", tags$br(),
