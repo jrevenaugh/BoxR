@@ -2,16 +2,23 @@
 #
 # BoxR shiny server
 
+source("plotting.R")
 
 server <- function(input, output, session) {
 
   # Reactives ------------------------------------------------------------------
 
-
   # Event Observers ------------------------------------------------------------
 
 
-  # Main Panel -----------------------------------------------------------------
+  # Game Panel -----------------------------------------------------------------
+  output$gamegrid <- renderPlot({
+    g <- plotDots(input$grows, input$gcols)
+#    g <- g + plotLines()
+#    g <- g + plotBoxes()
+
+    g
+  })
 
   # Pop up help panel
   observeEvent(input$help, {
@@ -22,8 +29,8 @@ server <- function(input, output, session) {
                  "and goes again.",
                  "When all lines are drawn, the player with the most completed squares wins.",
                  tags$br(), tags$br(),
-                 "Select sides to draw by placing cursor near midpoint and clicking.",
-                 "Erase the last line drawn with the Undo button.",
+                 "Select side to draw by placing cursor near midpoint and clicking.",
+                 "Erase the last line drawn by double clicking midpoint.",
                  "Justin Revenaugh", tags$br(),
                  "Earth Sciences", tags$br(),
                  "University of Minnesota", tags$br(),
