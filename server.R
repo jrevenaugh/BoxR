@@ -7,15 +7,27 @@ source("plotting.R")
 server <- function(input, output, session) {
 
   # Reactives ------------------------------------------------------------------
+  grid <- reactiveValues(dots = NA,
+                         hLines = NA,
+                         vLines = NA,
+                         boxes = NA)
 
   # Event Observers ------------------------------------------------------------
+  observeEvent(c(input$grows, input$gcols, input$reset), {
+    grid$dots <- expand.grid(x = seq(1, input$gcols), y = seq(1, input$grows))
+    grid$hLines <- rep(FALSE, input$grows * input$gcols)
+    grid$vLines <- rep(FALSE, input$gcols * input$grows)
+    grid$boxes <- rep(0, input$grows * input$gcols)
+    grid$boxes[c(1,2)] <- 1
+  })
 
 
   # Game Panel -----------------------------------------------------------------
   output$gamegrid <- renderPlot({
-    g <- plotDots(input$grows, input$gcols)
-#    g <- g + plotLines()
-#    g <- g + plotBoxes()
+    g <- ggplot() + theme_void() + coord_equal()
+    g <- plotBoxes(g, input$grows, input$gcols, grid$dots, grid$boxes)
+    g <- plotLines(g, input$grows, input$gcols, grid$dots, grid$hLines, grid$vLines)
+    g <- plotDots(g, grid$dots)
 
     g
   })
