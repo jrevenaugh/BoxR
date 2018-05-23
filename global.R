@@ -14,5 +14,10 @@ dotFill <- "gray50"
 lineSize <- 1.5
 lineColor <- "gray50"
 
+pPoly1 <- data.frame(x = c(0, 1, 1, 0, 0),
+                     y = c(0, 0, 85, 85, 0))
+pPoly2 <- data.frame(x = c(2, 3, 3, 2, 2),
+                     y = c(0, 0, 85, 85, 0))
+
 pFactor <- factor(x = c(1, 2), levels = c(1, 2), labels = c("One", "Two"))
 

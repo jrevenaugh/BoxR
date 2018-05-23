@@ -55,3 +55,33 @@ plotBoxes <- function(g, centroids, boxes) {
   g
 }
 
+plotScores <- function(scores, nB) {
+  yScale <- 85 / nB
+  pRect <- data.frame(xmin = c(0, 2), xmax = c(1, 3),
+                      ymin = c(0, 0), ymax = scores * yScale,
+                      col = pFactor)
+  g <- ggplot() +
+    theme_void() + theme(legend.position = "none") +
+    scale_x_continuous(limits = c(0, 3)) +
+    scale_y_continuous(limits = c(-15, 85)) +
+    geom_rect(data = pRect,
+              aes(xmin = xmin,
+                  xmax = xmax,
+                  ymin = ymin,
+                  ymax = ymax,
+                  fill = col)) +
+    geom_polygon(data = pPoly1,
+                 aes(x, y),
+                 fill = NA,
+                 color = "black") +
+    geom_polygon(data = pPoly2,
+                 aes(x, y),
+                 fill = NA,
+                 color = "black") +
+
+
+    scale_fill_manual(values = boxFill) +
+    annotate("text", x = 0.5, y = -9, label = format(scores[1]), size = 5) +
+    annotate("text", x = 2.5, y = -9, label = format(scores[2]), size = 5)
+  g
+}

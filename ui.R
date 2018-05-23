@@ -31,7 +31,6 @@ ui <- fluidPage(
                                  choices = c("One (play the computer)" = 1,
                                              "Two (play a friend)" = 2),
                                  selected = 1),
-                    hr(),
                     fluidRow(
                       column(6,
                         actionButton(inputId = "reset",
@@ -46,6 +45,7 @@ ui <- fluidPage(
                                      style = "margin-bottom: 5px;")
                       )
                     ),
+                    hr(),
                     h5("Score", align = "center"),
                     plotOutput(outputId = "scores", width = "100%", height = "100px"),
                     h5("Turn", align = "center"),
