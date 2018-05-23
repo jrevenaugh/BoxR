@@ -99,13 +99,13 @@ server <- function(input, output, session) {
 
   # Undo a pick (maybe)
   observeEvent(input$dblclick,{
+    if (is.na(lastLine())) return
     x <- input$dblclick$x
     y <- input$dblclick$y
     gDist <- sqrt((grid$centers$x - x)^2 + (grid$centers$y - y)^2)
     l <- which.min(gDist)
-    if (l == lastLine() && grid$lines[l] == TRUE) {
+    if (l == lastLine()) {
       grid$lines[l] <- FALSE
-      player$who <- nextTurn[player$who]
       lastLine(NA)
       scored <- FALSE
       for (i in 1:grid$nB) {
@@ -117,7 +117,7 @@ server <- function(input, output, session) {
           }
         }
       }
-      if (scored) player$who <- nextTurn[player$who]
+      if (!scored) player$who <- nextTurn[player$who]
     }
   })
 
