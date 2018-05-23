@@ -79,6 +79,7 @@ server <- function(input, output, session) {
     y <- input$click$y
     gDist <- sqrt((grid$centers$x - x)^2 + (grid$centers$y - y)^2)
     l <- which.min(gDist)
+    if (grid$lines[l] == TRUE) return()
     grid$lines[l] <- TRUE
     lastLine(l)
 
@@ -102,32 +103,22 @@ server <- function(input, output, session) {
     y <- input$dblclick$y
     gDist <- sqrt((grid$centers$x - x)^2 + (grid$centers$y - y)^2)
     l <- which.min(gDist)
-    if (l == lastLine() & grid$lines[l] == TRUE) {
+    if (l == lastLine() && grid$lines[l] == TRUE) {
       grid$lines[l] <- FALSE
       player$who <- nextTurn[player$who]
       lastLine(NA)
+      scored <- FALSE
       for (i in 1:grid$nB) {
         if (any(grid$b2l[i,] == l)) {
           if (grid$boxes[i] > 0) {
+            scored <- TRUE
             score$p[grid$boxes[i]] <- score$p[grid$boxes[i]] - 1
             grid$boxes[i] <- 0
           }
         }
       }
+      if (scored) player$who <- nextTurn[player$who]
     }
-
-    # Check for four sides
-    scored <- FALSE
-    for (i in 1:grid$nB) {
-      if (grid$boxes[i] == 0) {
-        if (sum(grid$lines[grid$b2l[i,1:4]]) == 4) {
-          grid$boxes[i] <- player$who
-          score$p[player$who] <- score$p[player$who] + 1
-          scored <- TRUE
-        }
-      }
-    }
-    if (!scored) player$who <- nextTurn[player$who]
   })
 
 
@@ -146,12 +137,14 @@ server <- function(input, output, session) {
     g
   })
 
-  output$turn <- renderPlot({
-    g <- ggplot() +
-      theme_void() + theme(legend.position = "none") +
-      scale_x_continuous(expand = c(0, 0)) +
-      annotate("rect", xmin = 0, xmax = 1, ymin = 0, ymax = 1, fill = boxFill[player$who])
-    g
+  observeEvent(player$who, {
+    output$turn <- renderPlot({
+      g <- ggplot() +
+        theme_void() + theme(legend.position = "none") +
+        scale_x_continuous(expand = c(0, 0)) +
+        annotate("rect", xmin = 0, xmax = 1, ymin = 0, ymax = 1, fill = boxFill[player$who])
+      g
+    })
   })
 
   # Pop up help panel
