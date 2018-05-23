@@ -1,3 +1,5 @@
+# Pick an edge using click location and edge centers
+
 whichEdge <- function(centers, click) {
   x <- click$x
   y <- click$y
