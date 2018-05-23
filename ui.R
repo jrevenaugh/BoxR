@@ -16,13 +16,13 @@ ui <- fluidPage(
                       column(6,
                         numericInput(inputId = "grows",
                                      label = "Rows",
-                                     min = 3, max = 10, step = 1,
+                                     min = 3, max = 11, step = 1,
                                      value = 4)
                       ),
                       column(6,
                         numericInput(inputId = "gcols",
                                      label = "Columns",
-                                     min = 3, max = 10, step = 1,
+                                     min = 3, max = 11, step = 1,
                                      value = 4)
                       )
                     ),

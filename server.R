@@ -75,7 +75,7 @@ server <- function(input, output, session) {
     lastLine(NA)
   })
 
-  # Pick an edge
+  # Pick an edge to draw
   observeEvent(input$click,{
     l <- whichEdge(grid$centers, input$click)
     if (grid$edges[l] == TRUE) return()
@@ -96,7 +96,7 @@ server <- function(input, output, session) {
     if (!scored) player$who <- nextTurn[player$who]
   })
 
-  # Undo a pick (maybe)
+  # Undo a edge draw (maybe)
   observeEvent(input$dblclick,{
     if (is.na(lastLine())) return()
     l <- whichEdge(grid$centers, input$dblclick)
