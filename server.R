@@ -57,17 +57,20 @@ server <- function(input, output, session) {
 
     # Build box centroid list and box to line hash matrix
     k <- 1
-    for (j in 1:(input$gcols - 1)) {
-      for (i in 1:(input$grows - 1)) {
+    for (j in 1:(input$grows - 1)) {
+      for (i in 1:(input$gcols - 1)) {
         grid$centroids$x[k] <- 0.5 + (i - 1)
         grid$centroids$y[k] <- 0.5 + (j - 1)
         grid$b2l[k,1] <- i + (j - 1) * (input$gcols - 1)
         grid$b2l[k,2] <- i + j * (input$gcols - 1)
-        grid$b2l[k,3] <- grid$nH + j + (i - 1) * (input$gcols - 1)
-        grid$b2l[k,4] <- grid$nH + j + i * (input$gcols - 1)
+        grid$b2l[k,3] <- grid$nH + j + (i - 1) * (input$grows - 1)
+        grid$b2l[k,4] <- grid$nH + j + i * (input$grows - 1)
         k <- k + 1
       }
     }
+    print(grid$centers)
+    print(grid$centroids)
+    print(grid$b2l)
 
     # Reset score and current player
     score$p <- rep(0, 2)
@@ -98,7 +101,7 @@ server <- function(input, output, session) {
 
   # Undo a pick (maybe)
   observeEvent(input$dblclick,{
-    if (is.na(lastLine())) return
+    if (is.na(lastLine())) return()
     l <- whichEdge(grid$centers, input$dblclick)
     if (l == lastLine()) {
       grid$lines[l] <- FALSE
