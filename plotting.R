@@ -14,35 +14,25 @@ plotDots <- function(g, dots) {
   g
 }
 
-plotLines <- function(g, nrows, ncols, dots, hLines, vLines) {
+plotLines <- function(g, nrows, ncols, centers, lines) {
   # Loop over horizontal lines
-  if (sum(hLines) > 0) {
-    xA <- data.frame(x = NA, y = NA)
-    for (i in seq_along(hLines)) {
-      if (i %% ncols & hLines[i]) {
-        xA <- rbind(xA, data.frame(x = c(dots$x[i], dots$x[i] + 1), y = rep(dots$y[i], 2)))
-        xA <- rbind(xA, data.frame(x = NA, y = NA))
+  if (sum(lines) > 0) {
+    A <- data.frame(x = NA, y = NA)
+    for (i in seq_along(lines)) {
+      if (lines[i]) {
+        if (centers$vert[i]) {
+          x <- rep(centers$x[i], 2)
+          y <- c(centers$y[i] - 0.5, centers$y[i] + 0.5)
+        } else {
+          y <- rep(centers$y[i], 2)
+          x <- c(centers$x[i] - 0.5, centers$x[i] + 0.5)
+        }
+        A <- rbind(A, data.frame(x = x, y = y))
+        A <- rbind(A, data.frame(x = NA, y = NA))
       }
     }
-    print(xA)
     g <- g +
-         geom_path(data = xA,
-                   aes(x = x, y = y),
-                   color = "gray50",
-                   size = 1.5)
-  }
-  # Loop over vertical lines
-  if (sum(vLines) > 0) {
-    yA <- data.frame(x = NA, y = NA)
-    for (i in seq_along(vLines)) {
-      if (i %% nrows & vLines[i]) {
-        yA <- rbind(yA, data.frame(x = rep(dots$x[i], 2), y = c(dots$y[i], dots$y[i] + 1)))
-        yA <- rbind(yA, data.frame(x = NA, y = NA))
-      }
-    }
-    print(yA)
-    g <- g +
-         geom_path(data = yA,
+         geom_path(data = A,
                    aes(x = x, y = y),
                    color = "gray50",
                    size = 1.5)
@@ -50,12 +40,12 @@ plotLines <- function(g, nrows, ncols, dots, hLines, vLines) {
   g
 }
 
-plotBoxes <- function(g, nrows, ncols, dots, boxes) {
+plotBoxes <- function(g, centroids, boxes) {
   l1 <- which(boxes == 1)
   if (length(l1)) {
     for (i in l1) {
-      p1 <- data.frame(xmin = dots$x[i], xmax = dots$x[i] + 1,
-                       ymin = dots$y[i], ymax = dots$y[i] + 1)
+      p1 <- data.frame(xmin = centroids$x[i] - 0.5, xmax = centroids$x[i] + 0.5,
+                       ymin = centroids$y[i] - 0.5, ymax = centroids$y[i] + 0.5)
       g <- g + geom_rect(data = p1,
                          aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
                          fill = "blue",
@@ -65,8 +55,8 @@ plotBoxes <- function(g, nrows, ncols, dots, boxes) {
   l2 <- which(boxes == 2)
   if (length(l2)) {
     for (i in l2) {
-      p2 <- data.frame(xmin = dots$x[i], xmax = dots$x[i] + 1,
-                       ymin = dots$y[i], ymax = dots$y[i] + 1)
+      p2 <- data.frame(xmin = centroids[i]$x - 0.5, xmax = centroids[i]$x + 0.5,
+                       ymin = centroids[i]$y - 0.5, ymax = centroids[i]$y + 0.5)
       g <- g + geom_rect(data = p2,
                          aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
                          fill = "red",
