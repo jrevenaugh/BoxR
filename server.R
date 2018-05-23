@@ -17,7 +17,7 @@ server <- function(input, output, session) {
                          edges = NA,
                          boxes = NA,
                          centroids = NA,
-                         b2l = NA)
+                         b2e = NA)
 
   player <- reactiveValues(who = 1)
   score <- reactiveValues(p = rep(0, 2))
@@ -36,7 +36,7 @@ server <- function(input, output, session) {
     grid$edges <- rep(FALSE, grid$nL)
     grid$boxes <- rep(0, (input$grows - 1) * (input$gcols - 1))
     grid$centroids <- data.frame(x = rep(0, grid$nB), y = rep(0, grid$nB))
-    grid$b2l <- matrix(0, nrow = grid$nB, ncol = 4)
+    grid$b2e <- matrix(0, nrow = grid$nB, ncol = 4)
 
     grid$centers <- data.frame(x = rep(0, grid$nL),
                                y = rep(0, grid$nL),
@@ -61,10 +61,10 @@ server <- function(input, output, session) {
       for (i in 1:(input$gcols - 1)) {
         grid$centroids$x[k] <- 0.5 + (i - 1)
         grid$centroids$y[k] <- 0.5 + (j - 1)
-        grid$b2l[k,1] <- i + (j - 1) * (input$gcols - 1)
-        grid$b2l[k,2] <- i + j * (input$gcols - 1)
-        grid$b2l[k,3] <- grid$nH + j + (i - 1) * (input$grows - 1)
-        grid$b2l[k,4] <- grid$nH + j + i * (input$grows - 1)
+        grid$b2e[k,1] <- i + (j - 1) * (input$gcols - 1)
+        grid$b2e[k,2] <- i + j * (input$gcols - 1)
+        grid$b2e[k,3] <- grid$nH + j + (i - 1) * (input$grows - 1)
+        grid$b2e[k,4] <- grid$nH + j + i * (input$grows - 1)
         k <- k + 1
       }
     }
@@ -86,7 +86,7 @@ server <- function(input, output, session) {
     scored <- FALSE
     for (i in 1:grid$nB) {
       if (grid$boxes[i] == 0) {
-        if (sum(grid$edges[grid$b2l[i,1:4]]) == 4) {
+        if (sum(grid$edges[grid$b2e[i,1:4]]) == 4) {
           grid$boxes[i] <- player$who
           score$p[player$who] <- score$p[player$who] + 1
           scored <- TRUE
@@ -105,7 +105,7 @@ server <- function(input, output, session) {
       lastLine(NA)
       scored <- FALSE
       for (i in 1:grid$nB) {
-        if (any(grid$b2l[i,] == l)) {
+        if (any(grid$b2e[i,] == l)) {
           if (grid$boxes[i] > 0) {
             scored <- TRUE
             score$p[grid$boxes[i]] <- score$p[grid$boxes[i]] - 1
