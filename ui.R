@@ -30,7 +30,7 @@ ui <- fluidPage(
                                  label = "Players",
                                  choices = c("One (play the computer)" = 1,
                                              "Two (play a friend)" = 2),
-                                 selected = 1),
+                                 selected = 2),
                     fluidRow(
                       column(6,
                         actionButton(inputId = "reset",

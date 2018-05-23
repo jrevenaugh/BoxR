@@ -141,7 +141,10 @@ server <- function(input, output, session) {
       g <- ggplot() +
         theme_void() + theme(legend.position = "none") +
         scale_x_continuous(expand = c(0, 0)) +
-        annotate("rect", xmin = 0, xmax = 1, ymin = 0, ymax = 1, fill = boxFill[player$who])
+        annotate("rect", xmin = 0, xmax = 1, ymin = 0, ymax = 1,
+                 fill = boxFill[player$who],
+                 color = edgeColor,
+                 size = pSize)
       g
     })
   })
@@ -157,6 +160,7 @@ server <- function(input, output, session) {
                  tags$br(), tags$br(),
                  "Select side to draw by placing cursor near midpoint and clicking.",
                  "Erase the last line drawn by double clicking midpoint.",
+                 tags$br(), tags$br(),
                  "Justin Revenaugh", tags$br(),
                  "Earth Sciences", tags$br(),
                  "University of Minnesota", tags$br(),
