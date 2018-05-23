@@ -14,13 +14,13 @@ ui <- fluidPage(
             h4("Grid Dimensions"),
                     fluidRow(
                       column(6,
-                        numericInput(inputId = "grows",
+                        numericInput(inputId = "gRows",
                                      label = "Rows",
                                      min = 3, max = 11, step = 1,
                                      value = 4)
                       ),
                       column(6,
-                        numericInput(inputId = "gcols",
+                        numericInput(inputId = "gCols",
                                      label = "Columns",
                                      min = 3, max = 11, step = 1,
                                      value = 4)

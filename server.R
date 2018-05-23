@@ -24,17 +24,17 @@ server <- function(input, output, session) {
   lastLine <- reactiveVal(NA)
 
   # Event Observers ------------------------------------------------------------
-  # Set up fresh grid if dimensions or reset is hit
-  observeEvent(c(input$grows, input$gcols, input$reset), {
-    if (is.na(input$grows) | is.na(input$gcols)) return()
-    grid$dots <- expand.grid(x = seq(1, input$gcols) - 1, y = seq(1, input$grows) - 1)
-    grid$nH <- input$grows * (input$gcols - 1)
-    grid$nV <- input$gcols * (input$grows - 1)
-    grid$nB <- (input$grows - 1) * (input$gcols - 1)
+  # Set up fresh grid if dimensions, # players, or reset is hit
+  observeEvent(c(input$gRows, input$gCols, input$nPlayers, input$reset), {
+    if (is.na(input$gRows) | is.na(input$gCols)) return()
+    grid$dots <- expand.grid(x = seq(1, input$gCols) - 1, y = seq(1, input$gRows) - 1)
+    grid$nH <- input$gRows * (input$gCols - 1)
+    grid$nV <- input$gCols * (input$gRows - 1)
+    grid$nB <- (input$gRows - 1) * (input$gCols - 1)
     grid$nL <- grid$nH + grid$nV
 
     grid$edges <- rep(FALSE, grid$nL)
-    grid$boxes <- rep(0, (input$grows - 1) * (input$gcols - 1))
+    grid$boxes <- rep(0, (input$gRows - 1) * (input$gCols - 1))
     grid$centroids <- data.frame(x = rep(0, grid$nB), y = rep(0, grid$nB))
     grid$b2e <- matrix(0, nrow = grid$nB, ncol = 4)
 
@@ -44,27 +44,27 @@ server <- function(input, output, session) {
 
     # Build edge centers list
     for (i in 1:grid$nH) {
-      grid$centers$x[i] <- (i - 1) %% (input$gcols - 1) + 0.5
-      grid$centers$y[i] <- (i - 1) %/% (input$gcols - 1)
+      grid$centers$x[i] <- (i - 1) %% (input$gCols - 1) + 0.5
+      grid$centers$y[i] <- (i - 1) %/% (input$gCols - 1)
     }
     k <- i + 1
     for (i in 1:grid$nV) {
-      grid$centers$y[k] <- (i - 1) %% (input$grows - 1) + 0.5
-      grid$centers$x[k] <- (i - 1) %/% (input$grows - 1)
+      grid$centers$y[k] <- (i - 1) %% (input$gRows - 1) + 0.5
+      grid$centers$x[k] <- (i - 1) %/% (input$gRows - 1)
       grid$centers$vert[k] <- TRUE
       k <- k + 1
     }
 
     # Build box centroid list and box to edge hash matrix
     k <- 1
-    for (j in 1:(input$grows - 1)) {
-      for (i in 1:(input$gcols - 1)) {
+    for (j in 1:(input$gRows - 1)) {
+      for (i in 1:(input$gCols - 1)) {
         grid$centroids$x[k] <- 0.5 + (i - 1)
         grid$centroids$y[k] <- 0.5 + (j - 1)
-        grid$b2e[k,1] <- i + (j - 1) * (input$gcols - 1)
-        grid$b2e[k,2] <- i + j * (input$gcols - 1)
-        grid$b2e[k,3] <- grid$nH + j + (i - 1) * (input$grows - 1)
-        grid$b2e[k,4] <- grid$nH + j + i * (input$grows - 1)
+        grid$b2e[k,1] <- i + (j - 1) * (input$gCols - 1)
+        grid$b2e[k,2] <- i + j * (input$gCols - 1)
+        grid$b2e[k,3] <- grid$nH + j + (i - 1) * (input$gRows - 1)
+        grid$b2e[k,4] <- grid$nH + j + i * (input$gRows - 1)
         k <- k + 1
       }
     }
