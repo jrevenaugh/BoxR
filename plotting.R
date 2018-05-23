@@ -7,9 +7,9 @@ plotDots <- function(g, dots) {
        geom_point(data = dots,
                   aes(x = x, y = y),
                   pch = 21,
-                  size = 4,
+                  size = dotSize,
                   color = "black",
-                  fill = "gray50")
+                  fill = dotFill)
 
   g
 }
@@ -34,33 +34,22 @@ plotLines <- function(g, centers, lines) {
     g <- g +
          geom_path(data = A,
                    aes(x = x, y = y),
-                   color = "gray50",
-                   size = 1.5)
+                   color = lineColor,
+                   size = lineSize)
   }
   g
 }
 
 plotBoxes <- function(g, centroids, boxes) {
-  l1 <- which(boxes == 1)
+  l1 <- which(boxes != 0)
   if (length(l1)) {
     for (i in l1) {
       p1 <- data.frame(xmin = centroids$x[i] - 0.5, xmax = centroids$x[i] + 0.5,
                        ymin = centroids$y[i] - 0.5, ymax = centroids$y[i] + 0.5)
       g <- g + geom_rect(data = p1,
                          aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
-                         fill = "blue",
-                         alpha = 0.2)
-    }
-  }
-  l2 <- which(boxes == 2)
-  if (length(l2)) {
-    for (i in l2) {
-      p2 <- data.frame(xmin = centroids[i]$x - 0.5, xmax = centroids[i]$x + 0.5,
-                       ymin = centroids[i]$y - 0.5, ymax = centroids[i]$y + 0.5)
-      g <- g + geom_rect(data = p2,
-                         aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
-                         fill = "red",
-                         alpha = 0.2)
+                         fill = boxFill[boxes[i]],
+                         alpha = boxAlpha)
     }
   }
   g

@@ -7,7 +7,7 @@ require(shiny)
 
 ui <- fluidPage(
         tags$style(type = "text/css", "html, body {width:100%;height:100%}"),
-        titlePanel(title = HTML("<p style = \"font-size:20px\"> &nbsp</p>"),
+        titlePanel(title = "",
                    windowTitle = "Dots and Boxes"),
         sidebarLayout(
           sidebarPanel(width = 3,
@@ -46,6 +46,10 @@ ui <- fluidPage(
                                      style = "margin-bottom: 5px;")
                       )
                     ),
+                    h5("Score", align = "center"),
+                    plotOutput(outputId = "scores", width = "100%", height = "100px"),
+                    h5("Turn", align = "center"),
+                    plotOutput(outputId = "turn", width = "100%", height = "25px"),
                     style = "opacity: 0.8; background:#FAFAFA;"
           ),
           mainPanel(
