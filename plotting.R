@@ -14,7 +14,7 @@ plotDots <- function(g, dots) {
   g
 }
 
-plotLines <- function(g, nrows, ncols, centers, lines) {
+plotLines <- function(g, centers, lines) {
   # Loop over horizontal lines
   if (sum(lines) > 0) {
     A <- data.frame(x = NA, y = NA)

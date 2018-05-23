@@ -62,9 +62,6 @@ server <- function(input, output, session) {
         k <- k + 1
       }
     }
-    print(grid$centers)
-    print(grid$centroid)
-    print(grid$b2l)
   })
 
   # Pick a side
@@ -77,7 +74,6 @@ server <- function(input, output, session) {
 
     # Check for four sides
     for (i in 1:grid$nB) {
-      print(grid$lines[grid$b2l[i,1:4]])
       if (sum(grid$lines[grid$b2l[i,1:4]]) == 4) grid$boxes[i] <- TRUE
     }
   })
@@ -87,7 +83,7 @@ server <- function(input, output, session) {
   output$gamegrid <- renderPlot({
     g <- ggplot() + theme_void() + coord_equal()
     g <- plotBoxes(g, grid$centroids, grid$boxes)
-    g <- plotLines(g, input$grows, input$gcols, grid$centers, grid$lines)
+    g <- plotLines(g, grid$centers, grid$lines)
     g <- plotDots(g, grid$dots)
 
     g
