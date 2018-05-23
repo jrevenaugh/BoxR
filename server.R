@@ -3,6 +3,7 @@
 # BoxR shiny server
 
 source("plotting.R")
+source("picker.R")
 
 server <- function(input, output, session) {
 
@@ -25,6 +26,7 @@ server <- function(input, output, session) {
   # Event Observers ------------------------------------------------------------
   # Set up fresh grid if dimensions or reset is hit
   observeEvent(c(input$grows, input$gcols, input$reset), {
+    if (is.na(input$grows) | is.na(input$gcols)) return()
     grid$dots <- expand.grid(x = seq(1, input$gcols) - 1, y = seq(1, input$grows) - 1)
     grid$nH <- input$grows * (input$gcols - 1)
     grid$nV <- input$gcols * (input$grows - 1)
@@ -73,17 +75,14 @@ server <- function(input, output, session) {
     lastLine(NA)
   })
 
-  # Pick a side
+  # Pick an edge
   observeEvent(input$click,{
-    x <- input$click$x
-    y <- input$click$y
-    gDist <- sqrt((grid$centers$x - x)^2 + (grid$centers$y - y)^2)
-    l <- which.min(gDist)
+    l <- whichEdge(grid$centers, input$click)
     if (grid$lines[l] == TRUE) return()
     grid$lines[l] <- TRUE
     lastLine(l)
 
-    # Check for four sides
+    # Check for four sided boxes and attribute score(s) if any
     scored <- FALSE
     for (i in 1:grid$nB) {
       if (grid$boxes[i] == 0) {
@@ -100,10 +99,7 @@ server <- function(input, output, session) {
   # Undo a pick (maybe)
   observeEvent(input$dblclick,{
     if (is.na(lastLine())) return
-    x <- input$dblclick$x
-    y <- input$dblclick$y
-    gDist <- sqrt((grid$centers$x - x)^2 + (grid$centers$y - y)^2)
-    l <- which.min(gDist)
+    l <- whichEdge(grid$centers, input$dblclick)
     if (l == lastLine()) {
       grid$lines[l] <- FALSE
       lastLine(NA)
@@ -122,7 +118,8 @@ server <- function(input, output, session) {
   })
 
 
-  # Game Panel -----------------------------------------------------------------
+  # Graphics Renderers ---------------------------------------------------------
+  # Main grid
   output$gamegrid <- renderPlot({
     g <- ggplot() + theme_void() + coord_equal()
     g <- plotBoxes(g, grid$centroids, grid$boxes)
@@ -132,11 +129,13 @@ server <- function(input, output, session) {
     g
   })
 
+  # Score
   output$scores <- renderPlot({
     g <- plotScores(score$p, grid$nB)
     g
   })
 
+  # Turn indicator (put here in plot block despite being an observer)
   observeEvent(player$who, {
     output$turn <- renderPlot({
       g <- ggplot() +
