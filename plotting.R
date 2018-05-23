@@ -14,12 +14,12 @@ plotDots <- function(g, dots) {
   g
 }
 
-plotLines <- function(g, centers, lines) {
-  # Loop over horizontal lines
-  if (sum(lines) > 0) {
+plotEdges <- function(g, centers, edges) {
+  # Loop over horizontal edges
+  if (sum(edges) > 0) {
     A <- data.frame(x = NA, y = NA)
-    for (i in seq_along(lines)) {
-      if (lines[i]) {
+    for (i in seq_along(edges)) {
+      if (edges[i]) {
         if (centers$vert[i]) {
           x <- rep(centers$x[i], 2)
           y <- c(centers$y[i] - 0.5, centers$y[i] + 0.5)
@@ -34,8 +34,8 @@ plotLines <- function(g, centers, lines) {
     g <- g +
          geom_path(data = A,
                    aes(x = x, y = y),
-                   color = lineColor,
-                   size = lineSize)
+                   color = edgeColor,
+                   size = edgeSize)
   }
   g
 }

@@ -14,7 +14,7 @@ server <- function(input, output, session) {
                          nL = NA,
                          nB = NA,
                          centers = NA,
-                         lines = NA,
+                         edges = NA,
                          boxes = NA,
                          centroids = NA,
                          b2l = NA)
@@ -33,7 +33,7 @@ server <- function(input, output, session) {
     grid$nB <- (input$grows - 1) * (input$gcols - 1)
     grid$nL <- grid$nH + grid$nV
 
-    grid$lines <- rep(FALSE, grid$nL)
+    grid$edges <- rep(FALSE, grid$nL)
     grid$boxes <- rep(0, (input$grows - 1) * (input$gcols - 1))
     grid$centroids <- data.frame(x = rep(0, grid$nB), y = rep(0, grid$nB))
     grid$b2l <- matrix(0, nrow = grid$nB, ncol = 4)
@@ -42,7 +42,7 @@ server <- function(input, output, session) {
                                y = rep(0, grid$nL),
                                vert = rep(FALSE, grid$nL))
 
-    # Build line centers list
+    # Build edge centers list
     for (i in 1:grid$nH) {
       grid$centers$x[i] <- (i - 1) %% (input$gcols - 1) + 0.5
       grid$centers$y[i] <- (i - 1) %/% (input$gcols - 1)
@@ -55,7 +55,7 @@ server <- function(input, output, session) {
       k <- k + 1
     }
 
-    # Build box centroid list and box to line hash matrix
+    # Build box centroid list and box to edge hash matrix
     k <- 1
     for (j in 1:(input$grows - 1)) {
       for (i in 1:(input$gcols - 1)) {
@@ -68,9 +68,6 @@ server <- function(input, output, session) {
         k <- k + 1
       }
     }
-    print(grid$centers)
-    print(grid$centroids)
-    print(grid$b2l)
 
     # Reset score and current player
     score$p <- rep(0, 2)
@@ -81,15 +78,15 @@ server <- function(input, output, session) {
   # Pick an edge
   observeEvent(input$click,{
     l <- whichEdge(grid$centers, input$click)
-    if (grid$lines[l] == TRUE) return()
-    grid$lines[l] <- TRUE
+    if (grid$edges[l] == TRUE) return()
+    grid$edges[l] <- TRUE
     lastLine(l)
 
     # Check for four sided boxes and attribute score(s) if any
     scored <- FALSE
     for (i in 1:grid$nB) {
       if (grid$boxes[i] == 0) {
-        if (sum(grid$lines[grid$b2l[i,1:4]]) == 4) {
+        if (sum(grid$edges[grid$b2l[i,1:4]]) == 4) {
           grid$boxes[i] <- player$who
           score$p[player$who] <- score$p[player$who] + 1
           scored <- TRUE
@@ -104,7 +101,7 @@ server <- function(input, output, session) {
     if (is.na(lastLine())) return()
     l <- whichEdge(grid$centers, input$dblclick)
     if (l == lastLine()) {
-      grid$lines[l] <- FALSE
+      grid$edges[l] <- FALSE
       lastLine(NA)
       scored <- FALSE
       for (i in 1:grid$nB) {
@@ -126,7 +123,7 @@ server <- function(input, output, session) {
   output$gamegrid <- renderPlot({
     g <- ggplot() + theme_void() + coord_equal()
     g <- plotBoxes(g, grid$centroids, grid$boxes)
-    g <- plotLines(g, grid$centers, grid$lines)
+    g <- plotEdges(g, grid$centers, grid$edges)
     g <- plotDots(g, grid$dots)
 
     g
@@ -153,10 +150,10 @@ server <- function(input, output, session) {
   observeEvent(input$help, {
     showModal(modalDialog(
       title = "Instructions",
-      HTML(paste("Players take turns drawing vertical or horizontal lines between dots.",
+      HTML(paste("Players take turns drawing vertical or horizontal edges between dots.",
                  "The player who draws the fourth side of a small squares scores one point",
                  "and goes again.",
-                 "When all lines are drawn, the player with the most completed squares wins.",
+                 "When all edges are drawn, the player with the most completed squares wins.",
                  tags$br(), tags$br(),
                  "Select side to draw by placing cursor near midpoint and clicking.",
                  "Erase the last line drawn by double clicking midpoint.",

@@ -11,8 +11,8 @@ boxFill <- c("dodgerblue", "orangered")
 boxAlpha <- 0.2
 dotSize <- 4
 dotFill <- "gray50"
-lineSize <- 1.5
-lineColor <- "gray50"
+edgeSize <- 1.5
+edgeColor <- "gray50"
 
 pPoly1 <- data.frame(x = c(0, 1, 1, 0, 0),
                      y = c(0, 0, 85, 85, 0))
